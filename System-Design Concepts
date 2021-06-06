@@ -1,0 +1,5 @@
+It too expensive to ask Load-balancer each time where to route user request. so load-balancer will be maintaining the state of 
+entire system(its like snapshot(ip addresses, port) of all the services and where they exist in which microservice boxes and how user can connect to them)
+also its keep cordinating with gateway and every services in system and make sure they know how to send the request to correct area.
+so load-balancer sends this info to gateway as snapshot and sanpshot will be perodically updated(lets say every 10 sec).
+userFeed service runs on mutiple servers and depends on many other services like(posts or follows).
