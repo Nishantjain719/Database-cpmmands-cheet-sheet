@@ -1,0 +1,45 @@
+C:\Users\asus>psql -U postgres
+postgres=# \c student
+psql -h localhost -p 5432 -U postgres tests
+SELECT * FROM person WHERE gender = 'Male' AND (country_of_birth = 'Japan' OR country_of_birth = 'China');
+test=# SELECT * FROM person OFFSET 5 LIMIT 5;
+SELECT * FROM person OFFSET 5 FETCH FIRST 5 ROW ONLY;
+test=# SELECT * FROM person WHERE country_of_birth IN ('China', 'Brazil', 'France');
+test=# SELECT * FROM person WHERE date_of_birth BETWEEN DATE '2020-01
+-01' AND '2020-12-12';
+test=# SELECT * FROM person WHERE email LIKE '%@google.%'; % means any charcter(s)
+test=# SELECT * FROM person WHERE email LIKE '________@%'; _ means 1 char at a time
+SELECT country_of_birth, COUNT(*) FROM person GROUP BY country_of_birth;
+test=# SELECT country_of_birth, COUNT(*) FROM person GROUP BY country_of_birth HAVING COUNT(*) > 5 ORDER BY country_of_birth;
+SELECT make, MIN(price) FROM car GROUP BY make;
+SELECT make, SUM(price) FROM car GROUP BY make; 
+test=# SELECT id, make, model, price, ROUND(price *.10, 2) AS ten_percent, ROUND(price - (price *.10), 2) AS modified_price FROM car;
+SELECT COALESCE(email, 'Email nor provided') FROM person; if column has null(empty) value but we want a default value we can use that.
+ SELECT NOW() - INTERVAL '10 YEARS';
+SELECT (NOW() - INTERVAL '10 YEARS')::DATE;
+ SELECT EXTRACT(DAY FROM NOW());
+SELECT first_name, last_name, gender, country_of_birth, date_of_birth, AGE(NOW(), date_of_birth) AS age FROM person;
+PRIMARY KEY uniquely identify a record in tables; ALTER TABLE person DROP CONSTRAINT person_pkey;
+ALTER TABLE person ADD PRIMARY KEY (id);
+SELECT email, count(*) FROM person GROUP BY email HAVING COUNT(*) > 1;
+ALTER TABLE person ADD CONSTRAINT unique_email UNIQUE (email);
+ALTER TABLE person DROP CONSTRAINT unique_email;
+ALTER TABLE person ADD CONSTRAINT gender_constraint CHECK (gender = 'Female' OR gender = 'Male
+test=# UPDATE person SET email = 'nich@gmail.com' WHERE id = 111;
+test=# insert into person (id, first_name, last_name, email, gender, date_of_birth, country_of_birth) values (11, 'ELON', 'Nicklin', 'pnicklin0@tripod.isis', 'Genderqueer', '2021-05-26', 'China') ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email;
+test=# insert into person (id, first_name, last_name, email, gender, date_of_birth, country_of_birth) values (11, 'george', 'hotz', 'pnicklin0@tripod.isis', 'Genderqueer', '2021-05-26', 'China') ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, last_name = EXCLUDED.last_name, first_name = EXCLUDED.first_name;
+it allows us to override existing data if present otherwise insert newone.
+
+foreign key is a column that references a primary key in another table
+    car_id BIGINT REFERENCES car (id),
+    UNIQUE(car_id)
+UPDATE person SET car_id = 1 WHERE id = 2;
+
+INNER JOINS
+test=# SELECT * FROM person
+test-# JOIN car ON person.car_id = car.id;
+test=# SELECT person.first_name, car.make, car.model, car.price FROM person JOIN car ON person.car_id = car.id;
+LEFT JOINS
+test=# SELECT * FROM person LEFT JOIN car ON person.car_id = car.id WHERE car.* IS NULL;
+
+test=# UPDATE person SET car_id = 13 WHERE id = 69;
